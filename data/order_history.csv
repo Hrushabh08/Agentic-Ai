@@ -1,0 +1,5 @@
+user_id,medicine_name,quantity,last_order_date,dosage_per_day
+C101,Amlodipine,30,2025-01-01,1
+C101,Metformin,60,2025-01-05,2
+C102,Paracetamol,20,2025-01-20,2
+C103,Azithromycin,6,2025-01-25,1
