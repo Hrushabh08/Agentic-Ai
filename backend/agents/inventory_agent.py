@@ -1,38 +1,24 @@
-# agents/inventory_agent.py
-import csv
-
-MEDICINES_CSV = "data/medicines.csv"
+import json
 
 def update_inventory(order):
-    """
-    Subtract ordered quantity from stock in medicines.csv
-    """
-    medicines = []
-    with open(MEDICINES_CSV, newline='', encoding="utf-8") as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            if row["name"].lower() == order["medicine_name"].lower():
-                row["stock"] = str(int(row["stock"]) - order["quantity"])
-            medicines.append(row)
+    with open("inventory.json", "r") as file:
+        inventory = json.load(file)
 
-    # Write back updated stock
-    with open(MEDICINES_CSV, "w", newline='', encoding="utf-8") as csvfile:
-        fieldnames = ["medicine_id","name","dosage","unit","stock","prescription_required"]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(medicines)
+    for item in inventory:
+        if item["medicine_id"] == order["medicine_id"]:
+            item["stock"] -= order["quantity"]
+
+    with open("inventory.json", "w") as file:
+        json.dump(inventory, file, indent=4)
+
 
 def check_refill_alerts(threshold=10):
-    """
-    Return list of medicines where stock <= threshold
-    """
-    low_stock = []
-    with open(MEDICINES_CSV, newline='', encoding="utf-8") as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            if int(row["stock"]) <= threshold:
-                low_stock.append({
-                    "medicine_name": row["name"],
-                    "stock": int(row["stock"])
-                })
-    return low_stock
+    with open("inventory.json", "r") as file:
+        inventory = json.load(file)
+
+    alerts = []
+    for item in inventory:
+        if item["stock"] <= threshold:
+            alerts.append(item)
+
+    return alerts

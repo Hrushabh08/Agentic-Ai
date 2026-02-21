@@ -1,31 +1,43 @@
 # agents/safety_agent.py
+
 import csv
 
-# Load medicines from CSV
-def load_medicine_data(file_path="data/medicines.csv"):
+def load_medicine_data(file_path="backend/data/medicines.csv"):
     medicines = {}
+
     with open(file_path, newline='', encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            # Use 'name' column from your CSV
-            medicines[row["name"].lower()] = {
+            medicines[int(row["id"])] = {
+                "name": row["name"],
                 "stock": int(row["stock"]),
                 "prescription_required": row["prescription_required"].lower() in ["true", "yes"]
             }
+
     return medicines
 
-def check_order(order):
-    medicines = load_medicine_data()
-    med_name = order["medicine_name"].lower()
 
-    if med_name not in medicines:
+def check_order(order):
+
+    medicines = load_medicine_data()
+
+    med_id = order.get("medicine_id")
+
+    if med_id is None:
+        return {
+            "approved": False,
+            "reason": "Medicine not recognized",
+            "order": order
+        }
+
+    if med_id not in medicines:
         return {
             "approved": False,
             "reason": "Medicine not found in inventory",
             "order": order
         }
 
-    med_data = medicines[med_name]
+    med_data = medicines[med_id]
 
     if med_data["stock"] < order["quantity"]:
         return {
@@ -43,6 +55,7 @@ def check_order(order):
 
     return {
         "approved": True,
-        "reason": "Stock available, prescription not required",
+        "reason": "Stock available",
         "order": order
     }
+       

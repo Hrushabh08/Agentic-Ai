@@ -1,0 +1,14 @@
+[
+  {
+    "medicine_id": "MED001",
+    "medicine_name": "Paracetamol",
+    "dosage": "500mg",
+    "stock": 100
+  },
+  {
+    "medicine_id": "MED002",
+    "medicine_name": "Ibuprofen",
+    "dosage": "400mg",
+    "stock": 50
+  }
+]
